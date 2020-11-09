@@ -35,7 +35,7 @@ public class StatusController {
 
     
     @RequestMapping("/status")
-    public ServerStatus greeting(@RequestParam(value="name", defaultValue="Anonymous")
+    public ServerStatus serverStatusRequest(@RequestParam(value="name", defaultValue="Anonymous")
                                  String name,
                                  @RequestParam(required = false) List<String> details)
     {
