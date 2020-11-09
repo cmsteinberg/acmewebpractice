@@ -11,6 +11,7 @@ public class ServerStatus {
     private String contentHeader;
     private String statusDesc = "Unknown";
 
+
     /**
      * Construct a ServerStatus using info passed in for identification, and obtaining current
      * server status from the appropriate Manager class.
