@@ -24,4 +24,28 @@ public class ServerManager {
     {
         return true;
     }
+
+    /**
+     * Gets the Extension names
+     * @return a string containing the extension names
+     */
+
+    public static String getCurrentExtensionNames() {
+        return "[Hypervisor, Kubernetes, RAID-6]";
+    }
+
+    /**
+     * Gets the memory status
+     * @return a descriptive string about the memory status
+     */
+    public static String getCurrentMemoryStatus(){
+        return "running low";
+    }
+    /**
+     * Gets the operational status
+     * @return a descriptive string about the operational status
+     */
+    public static String getCurrentOperationalStatus(){
+        return "operating normally";
+    }
 }
