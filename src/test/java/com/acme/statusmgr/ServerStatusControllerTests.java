@@ -112,7 +112,7 @@ public class ServerStatusControllerTests {
                 .andExpect(jsonPath("$.contentHeader").value(
                         "Server Status requested by yaakov"))
                 .andExpect(jsonPath("$.statusDesc").value(
-                        "Server is up, and its memory is running low," +
+                        "Server is up, and its memory is running low, " +
                             "and is using these extensions - [Hypervisor, Kubernetes, RAID-6]"));
 
     }
@@ -125,8 +125,8 @@ public class ServerStatusControllerTests {
                         "Server Status requested by yaakov"))
                 .andExpect(jsonPath("$.statusDesc").value(
                         "Server is up, and its memory is running low, " +
-                        "and is using these extensions - [Hypervisor, Kubernetes, RAID-6]," +
-                        " and is operating normally"));
+                        "and is using these extensions - [Hypervisor, Kubernetes, RAID-6], " +
+                        "and is operating normally"));
 
     }
     @Test
@@ -143,26 +143,74 @@ public class ServerStatusControllerTests {
 
     }
 
+    /**
+     * Testing multiple memories
+     * @throws Exception
+     */
     @Test
-    public void withParamShouldReturnTailored_Basic_Mem() throws Exception {
+    public void withParamShouldReturnTailored_Basic_Mem_Mem_Mem() throws Exception {
         this.mockMvc.perform(get(
-                "/server/status/detailed?details=memory"))
+                "/server/status/detailed?details=memory,memory,memory"))
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(jsonPath("$.contentHeader").value(
                         "Server Status requested by Anonymous"))
                 .andExpect(jsonPath("$.statusDesc").value(
-                        "Server is up, and its memory is running low,"));
+                        "Server is up, and its memory is running low, " +
+                                "and its memory is running low, and its memory is running low"));
 
     }
 
+    /**
+     * Testing multiples of each
+     * @throws Exception
+     */
     @Test
-    public void withParamShouldReturnTailored_NullDetailsError() throws Exception {
+    public void withParamShouldReturnTailored_Basic_Mem_Mem_Ext_Ext_Op_Mem_Op() throws Exception {
+        this.mockMvc.perform(get(
+                "/server/status/detailed?details=memory,memory," +
+                        "extensions,extensions,operations,memory,operations"))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.contentHeader").value(
+                        "Server Status requested by Anonymous"))
+                .andExpect(jsonPath("$.statusDesc").value(
+                        "Server is up, and its memory is running low, " +
+                                "and its memory is running low, " +
+                                "and is using these extensions - [Hypervisor, Kubernetes, RAID-6], " +
+                                "and is using these extensions - [Hypervisor, Kubernetes, RAID-6], " +
+                                "and is operating normally, " +
+                                "and its memory is running low, " +
+                                "and is operating normally"));
+
+    }
+
+    /**
+     * Testing no details param
+     * @throws Exception
+     */
+    @Test
+    public void withParamShouldReturnTailored_NoDetailsError() throws Exception {
         this.mockMvc.perform(get(
                 "/server/status/detailed"))
                 .andDo(print()).andExpect(status().reason
                 (is("Required List parameter \'details\' is not present")));
     }
 
+    /**
+     * Testing no list passed in to details
+     * @throws Exception
+     */
+    @Test
+    public void withParamShouldReturnTailored_NoDetailsError2() throws Exception {
+        this.mockMvc.perform(get(
+                "/server/status/detailed?details="))
+                .andDo(print()).andExpect(status().reason
+                (is("Required List parameter \'details\' is not present")));
+    }
+
+    /**
+     * Testing invalid details argument
+     * @throws Exception
+     */
     @Test
     public void withParamShouldReturnTailored_BadDetailsArg() throws Exception {
         this.mockMvc.perform(get(
@@ -171,8 +219,27 @@ public class ServerStatusControllerTests {
                 (is("Invalid details option")));
     }
 
+
+    /**
+     * Testing invalid details arg with valid details arg
+     * @throws Exception
+     */
     @Test
     public void withParamShouldReturnTailored_BadDetailsArg2() throws Exception {
+        this.mockMvc.perform(get(
+                "/server/status/detailed?details=memory,junkError"))
+                .andDo(print()).andExpect(status().reason
+                (is("Invalid details option")));
+    }
+
+
+
+    /**
+     * Testing invalid details arg with name and valid details arg
+     * @throws Exception
+     */
+    @Test
+    public void withParamShouldReturnTailored_BadDetailsArg3() throws Exception {
         this.mockMvc.perform(get(
                 "/server/status/detailed?name=Yaakov&details=memory,junkError"))
                 .andDo(print()).andExpect(status().reason
